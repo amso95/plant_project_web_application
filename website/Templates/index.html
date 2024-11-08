@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Web Page</title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/base-style.css') }}">
+</head>
+<body>
+    <div id="content-wrap">
+    <header>
+        <h1>Welcome to Plant Project DEMO Page</h1>
+    </header>
+    <main>
+        <h2>Try The Model</h2>
+        <div>
+        {% if msg %}
+            <h3>Step 2: File Ready to be Predicted</h3>
+            <p><strong>{{ msg }}</strong></p>
+            <button><a href="/predictions/">Classify image</a></button>
+        {% elif predicted_plant and predicted_water_frequency %}
+            <h3>Step 3: Prediction Done</h3>
+            <p><strong>Predicted plant:</strong><br>{{ predicted_plant }}</p>
+            <p><strong>Predicted watering frequency depending on this weeks weather forecast:</strong><br>{{ predicted_water_frequency }}</p>
+            <button> <a href="/">Classify another plant</a></button>
+        {% else %}
+            <p>Please select Image input:</p>
+            <input type="radio" id="upload_input" name="upload" value="upload" onclick="uploadContent();">
+            <label for="upload_input">Upload</label><br>
+            <input type="radio" id="take_picture_input" name="upload" value="take_picture" onclick="takePictureContent();">
+            <label for="take_picture_input">Take picture</label><br>
+
+            <div id="upload_div" class="hide">
+                <h3>Step 1: Upload new File</h3>
+                <p>Choose to upload an image or take an image for the model to classify</p>
+                <form method="post" enctype="multipart/form-data">
+                <input type="file" name="file">
+                <input type="submit" value="Upload">
+                </form>
+            </div>
+            <div id="take_picture_div" class="hide">
+                <h3>Step 1: Take Picture with Camera</h3>
+                <form method="post" action="{{ url_for('upload_file') }}">
+                <input type="submit" value="Capture" name="click"/>
+                </form><br>
+                <img src="{{ url_for('video_feed') }}" height="80%">
+            </div>
+        {% endif %}
+        </div>
+    </main>
+    </div>
+    <footer>
+        <p>&copy; Plant Project DEMO Page by Amanda Solberg</p>
+    </footer>
+</body>
+</html>
+<script>
+
+function uploadContent() {
+  document.getElementById("upload_div").classList.remove("hide");
+  document.getElementById("take_picture_div").classList.add("hide");
+}
+
+function takePictureContent() {
+  document.getElementById("upload_div").classList.add("hide");
+  document.getElementById("take_picture_div").classList.remove("hide");
+}
+</script>
+
+
+

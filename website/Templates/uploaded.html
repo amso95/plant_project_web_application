@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Web Page</title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/base-style.css') }}">
+</head>
+<body>
+    <div id="content-wrap">
+    <header>
+        <h1>Welcome to Plant Project DEMO Page</h1>
+    </header>
+    <main>
+        <h2>Try The Model</h2>
+        <div>
+        {% if msg %}
+            <h3>Step 2: File Ready to be Predicted</h3>
+            <p><strong>{{ msg }}</strong></p>
+            <button><a href="/predictions/">Classify image</a></button>
+        {% else %}
+            <button> <a href="/">Go back</a></button>
+        {% endif %}
+        </div>
+    </main>
+    </div>
+    <footer>
+        <p>&copy; Plant Project DEMO Page by Amanda Solberg</p>
+    </footer>
+</body>
+</html>
+
+

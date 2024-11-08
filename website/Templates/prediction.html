@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Web Page</title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/base-style.css') }}">
+</head>
+<body>
+    <div id="content-wrap">
+    <header>
+        <h1>Welcome to Plant Project DEMO Page</h1>
+    </header>
+    <main>
+        <h2>Try The Model</h2>
+        <div>
+        {% if predicted_plant and predicted_water_frequency %}
+            <h3>Step 3: Prediction Done</h3>
+            {% for name in image_name %}
+                <img src="{{ url_for('static', filename='images/' + name) }}" width="400"> 
+            {% endfor %}
+            <p><strong>Predicted plant:</strong><br>{{ predicted_plant }}</p>
+            <p><strong>Predicted watering frequency depending on this weeks weather forecast:</strong><br>{{ predicted_water_frequency }}</p>
+            <button><a href="/">Classify another plant</a></button>
+        {% else %}
+            <button> <a href="/" action="{{ url_for('clear_folder') }}">Go back</a></button>
+        {% endif %}
+        </div>
+    </main>
+    </div>
+    <footer>
+        <p>&copy; Plant Project DEMO Page by Amanda Solberg</p>
+    </footer>
+</body>
+</html>
+
+
+
