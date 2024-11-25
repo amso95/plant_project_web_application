@@ -7,11 +7,14 @@
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/base-style.css') }}">
 </head>
 <body>
-    <div id="content-wrap">
+    <div class="container">
     <header>
         <h1>Welcome to Plant Project DEMO Page</h1>
     </header>
+    <div id="asideLeft">
+    </div>
     <main>
+        
         <h2>Try The Model</h2>
         <div>
         {% if msg %}
@@ -34,20 +37,26 @@
                 <h3>Step 1: Upload new File</h3>
                 <p>Choose to upload an image or take an image for the model to classify</p>
                 <form method="post" enctype="multipart/form-data">
-                <input type="file" name="file">
+                <input type="file" name="file"><br><br>
+                <input type="checkbox" id="indoorPlant" name="indoorPlant" value="20">
+                <label for="indoorPlant">Indoor plant</label><br><br>
                 <input type="submit" value="Upload">
                 </form>
             </div>
             <div id="take_picture_div" class="hide">
                 <h3>Step 1: Take Picture with Camera</h3>
                 <form method="post" action="{{ url_for('upload_file') }}">
+                <input type="checkbox" id="indoorPlant" name="indoorPlant" value="20">
+                <label for="indoorPlant">Indoor plant</label><br>
                 <input type="submit" value="Capture" name="click"/>
                 </form><br>
-                <img src="{{ url_for('video_feed') }}" height="80%">
+                <img src="{{ url_for('video_feed') }}">
             </div>
         {% endif %}
         </div>
     </main>
+    <div id="asideRight">
+    </div>
     </div>
     <footer>
         <p>&copy; Plant Project DEMO Page by Amanda Solberg</p>
@@ -66,6 +75,3 @@ function takePictureContent() {
   document.getElementById("take_picture_div").classList.remove("hide");
 }
 </script>
-
-
-

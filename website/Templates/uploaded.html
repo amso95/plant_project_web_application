@@ -7,10 +7,12 @@
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/base-style.css') }}">
 </head>
 <body>
-    <div id="content-wrap">
+    <div class="container">
     <header>
         <h1>Welcome to Plant Project DEMO Page</h1>
     </header>
+    <div id="asideLeft">
+    </div>
     <main>
         <h2>Try The Model</h2>
         <div>
@@ -23,6 +25,9 @@
         {% endif %}
         </div>
     </main>
+    
+    <div id="asideRight">
+    </div>
     </div>
     <footer>
         <p>&copy; Plant Project DEMO Page by Amanda Solberg</p>

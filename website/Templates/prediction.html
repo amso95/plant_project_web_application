@@ -7,19 +7,21 @@
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/base-style.css') }}">
 </head>
 <body>
-    <div id="content-wrap">
+    <div class="container">
     <header>
         <h1>Welcome to Plant Project DEMO Page</h1>
     </header>
+    <!-- <div id="asideLeft">
+    </div> -->
     <main>
         <h2>Try The Model</h2>
         <div>
         {% if predicted_plant and predicted_water_frequency %}
             <h3>Step 3: Prediction Done</h3>
             {% for name in image_name %}
-                <img src="{{ url_for('static', filename='images/' + name) }}" width="400"> 
+                <img src="{{ url_for('static', filename='images/' + name) }}"> 
             {% endfor %}
-            <p><strong>Predicted plant:</strong><br>{{ predicted_plant }}</p>
+            <p><strong>Predicted plant:</strong><br>{{ predicted_plant }} <strong>with accuracy of</strong> {{ predicted_accuracy }} %</p>
             <p><strong>Predicted watering frequency depending on this weeks weather forecast:</strong><br>{{ predicted_water_frequency }}</p>
             <button><a href="/">Classify another plant</a></button>
         {% else %}
@@ -27,6 +29,8 @@
         {% endif %}
         </div>
     </main>
+    <!-- <div id="asideRight">
+    </div> -->
     </div>
     <footer>
         <p>&copy; Plant Project DEMO Page by Amanda Solberg</p>

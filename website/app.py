@@ -10,6 +10,8 @@ import datetime, time
 import glob
 from classes.model import Model
 from tensorflow.keras.preprocessing import image_dataset_from_directory
+from astral import LocationInfo
+from astral.sun import sun
 
 # sess = requests.Session()
 
@@ -23,25 +25,47 @@ LANGUAGE = "en-US,en;q=0.5"
 
 TARGET_SIZE = (224, 224)
 
-CLASS_NAMES = ["Lactuca virosa L.", "Pelargonium graveolens L'Hér.", "Cirsium arvense (L.) Scop.", 
-               "Cirsium vulgare (Savi) Ten.", "Pelargonium zonale (L.) L'Hér.", "Mercurialis annua L.",
-               "Hypericum perforatum L.", "Tradescantia fluminensis Vell.", "Lamium amplexicaule L.", 
-               "Lavandula dentata L.", "Melilotus albus Medik.", "Dryopteris filix-mas (L.) Schott", 
-               "Nephrolepis cordifolia (L.) C. Presl", "Nephrolepis exaltata (L.) Schott", "Osmunda regalis L.", 
-               "Lithodora fruticosa (L.) Griseb.", "Humulus lupulus L.", "Vaccaria hispanica (Mill.) Rauschert", 
-               "Calendula officinalis L.", "Carthamus lanatus L.", "Helminthotheca echioides (L.) Holub", 
-               "Lactuca muralis (L.) Gaertn.", "Limbarda crithmoides (L.) Dumort.", "Sedum acre L.", 
-               "Sedum album L.", "Sedum dasyphyllum L.", "Sedum sediforme (Jacq.) Pau", 
-               "Alliaria petiolata (M. Bieb.) Cavara & Grande", "Mercurialis perennis L.", "Hypericum androsaemum L.", 
-               "Hypericum hirsutum L.", "Hypericum tetrapterum Fr.", "Lamium hybridum Vill.", 
-               "Lamium purpureum L.", "Lavandula stoechas L.", "Galega officinalis L.", 
-               "Trifolium angustifolium L.", "Trifolium arvense L.", "Trifolium aureum Pollich", 
-               "Trifolium campestre Schreb.", "Trifolium hybridum L.", "Trifolium incarnatum L.", 
-               "Trifolium montanum L.", "Trifolium pratense L.", "Trifolium resupinatum L.", 
-               "Trifolium stellatum L.", "Punica granatum L.", "Alcea rosea L.", 
-               "Althaea cannabina L.", "Althaea officinalis L."]
+# CLASS_NAMES = ["Lactuca virosa L.", "Pelargonium graveolens L'Hér.", "Cirsium arvense (L.) Scop.", 
+#                "Cirsium vulgare (Savi) Ten.", "Pelargonium zonale (L.) L'Hér.", "Mercurialis annua L.",
+#                "Hypericum perforatum L.", "Tradescantia fluminensis Vell.", "Lamium amplexicaule L.", 
+#                "Lavandula dentata L.", "Melilotus albus Medik.", "Dryopteris filix-mas (L.) Schott", 
+#                "Nephrolepis cordifolia (L.) C. Presl", "Nephrolepis exaltata (L.) Schott", "Osmunda regalis L.", 
+#                "Lithodora fruticosa (L.) Griseb.", "Humulus lupulus L.", "Vaccaria hispanica (Mill.) Rauschert", 
+#                "Calendula officinalis L.", "Carthamus lanatus L.", "Helminthotheca echioides (L.) Holub", 
+#                "Lactuca muralis (L.) Gaertn.", "Limbarda crithmoides (L.) Dumort.", "Sedum acre L.", 
+#                "Sedum album L.", "Sedum dasyphyllum L.", "Sedum sediforme (Jacq.) Pau", 
+#                "Alliaria petiolata (M. Bieb.) Cavara & Grande", "Mercurialis perennis L.", "Hypericum androsaemum L.", 
+#                "Hypericum hirsutum L.", "Hypericum tetrapterum Fr.", "Lamium hybridum Vill.", 
+#                "Lamium purpureum L.", "Lavandula stoechas L.", "Galega officinalis L.", 
+#                "Trifolium angustifolium L.", "Trifolium arvense L.", "Trifolium aureum Pollich", 
+#                "Trifolium campestre Schreb.", "Trifolium hybridum L.", "Trifolium incarnatum L.", 
+#                "Trifolium montanum L.", "Trifolium pratense L.", "Trifolium resupinatum L.", 
+#                "Trifolium stellatum L.", "Punica granatum L.", "Alcea rosea L.", 
+#                "Althaea cannabina L.", "Althaea officinalis L."]
+
+
+# 100mb class names
+CLASS_NAMES = ["Pelargonium graveolens L'Hér.", "Cirsium arvense (L.) Scop.", "Cirsium vulgare (Savi) Ten.", 
+               "Mercurialis annua L.", "Hypericum perforatum L.", "Melilotus albus Medik.",
+               "Dryopteris filix-mas (L.) Schott", "Humulus lupulus L.", "Calendula officinalis L.", 
+               "Helminthotheca echioides (L.) Holub", "Sedum acre L.", "Sedum album L.", 
+               "Sedum sediforme (Jacq.) Pau", "Hypericum androsaemum L.", "Lamium purpureum L.", 
+               "Lavandula stoechas L.", "Trifolium incarnatum L.", "Trifolium pratense L.", 
+               "Punica granatum L.", "Alcea rosea L.", "Pancratium maritimum L.", 
+               "Ophrys apifera Huds.", "Lamium galeobdolon (L.) L.", "Lavandula angustifolia Mill.", 
+               "Sedum rupestre L.", "Papaver rhoeas L.", "Papaver somniferum L.", 
+               "Daucus carota L.", "Smilax aspera L.", "Trifolium repens L.", 
+               "Acacia dealbata Link", "Fragaria vesca L.", "Centranthus ruber (L.) DC.", 
+               "Lapsana communis L.", "Lactuca serriola L.", "Lupinus polyphyllus Lindl.", 
+               "Trachelospermum jasminoides (Lindl.) Lem.", "Tagetes erecta L.", "Cucurbita pepo L.", 
+               "Zamioculcas zamiifolia (Lodd.) Engl.", "Aegopodium podagraria L.", "Cirsium eriophorum (L.) Scop.", 
+               "Alliaria petiolata (M.Bieb.) Cavara & Grande", "Hypericum calycinum L.", "Kniphofia uvaria (L.) Hook.", 
+               "Lamium album L.", "Lamium maculatum (L.) L.", "Liriodendron tulipifera L.", 
+               "Anemone alpina L.", "Anemone hepatica L."]
 
 SUNLIGHT = {"Molnigt": "Full shade", "Soligt": "Full sun", "Övervägande molnigt": "Full shade", "Växlande molnighet": "Partial sun"}
+
+INDOOR_PLANT = False
 
 global capture,rec_frame, rec, out, camera
 capture=0
@@ -61,9 +85,14 @@ def allowed_file(filename):
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
+        global INDOOR_PLANT
+        if request.form.get('indoorPlant') == '20':
+            INDOOR_PLANT = True
+        else:
+            INDOOR_PLANT = False
         if request.form.get('click') == 'Capture':
             global capture
-            capture=1
+            capture = 1
             return uploaded('Picture successfully taken')
         # check if the post request has the file part
         if 'file' not in request.files:
@@ -93,7 +122,7 @@ def download_file(name):
 
 @app.route('/predictions/')
 def run_model():
-    global camera
+    global camera, INDOOR_PLANT
     camera.release()
     cv2.destroyAllWindows()
 
@@ -114,6 +143,7 @@ def run_model():
         # Classify the image
         predictions = model.model_class.predict(image_to_predict)
         predicted_class_index = np.argmax(predictions, axis=-1)[0]  # Get the index of the highest probability
+        predicted_accuracy = round(predictions[0][np.argmax(predictions, axis=-1)[0]] * 100, 2)
         predicted_class = CLASS_NAMES[predicted_class_index]  # Map index to class name
 
         URL = "https://www.google.com/search?lr=lang_en&ie=UTF-8&q=weather"
@@ -126,14 +156,21 @@ def run_model():
         URL += region
         # get data
         data = model.get_weather(URL, USER_AGENT, LANGUAGE)
+        sun_hours = get_sun_hours()
+        #print(sun_hours)
         temperature_data = []
-        sunlight_data = []
+        sun_hours_data = []
         full_sun_data = []
         partial_sun_data = []
         full_shade_data = []
         for dayweather in data["next_days"]:
-            temperature_data.append(dayweather['max_temp'])
-            temperature_data.append(dayweather['min_temp'])
+            sun_hours_data.append(sun_hours)
+            if INDOOR_PLANT:
+                temperature_data.append(20)
+                temperature_data.append(20)
+            else:
+                temperature_data.append(dayweather['max_temp'])
+                temperature_data.append(dayweather['min_temp'])
             if dayweather['weather'] == "Soligt":
                 full_sun_data.append(1)
                 full_sun_data.append(1)
@@ -153,12 +190,12 @@ def run_model():
                 full_shade_data.append(0)
                 full_shade_data.append(0)
 
-        plant_weather_data = model.get_weather_plant_data(temperature_data, full_sun_data, partial_sun_data, full_shade_data, predicted_class)
+        plant_weather_data = model.get_weather_plant_data(temperature_data, full_sun_data, partial_sun_data, full_shade_data, sun_hours_data, predicted_class)
         predicted_water_frequency = model.get_water_frequency(plant_weather_data)
         image_name = os.listdir(UPLOAD_FOLDER)
 
         if len(predicted_class) != 0:
-            return render_template('prediction.html', predicted_plant=predicted_class, predicted_water_frequency=predicted_water_frequency, image_name=image_name)
+            return render_template('prediction.html', predicted_plant=predicted_class, predicted_water_frequency=predicted_water_frequency, image_name=image_name, predicted_accuracy=predicted_accuracy)
     return render_template('prediction.html')
 
 @app.route('/uploaded/')
@@ -194,6 +231,12 @@ def record(out):
     while(rec):
         time.sleep(0.05)
         out.write(rec_frame)
+
+def get_sun_hours():
+    city = LocationInfo("Stockholm", "Sweden", "Europe/Sweden", 51.5, -0.116)        
+    s = sun(city.observer)
+    sun_hours = (s["sunset"].hour + float(s["sunset"].minute/60)) - (s["sunrise"].hour + float(s["sunrise"].minute/60))
+    return sun_hours
     
 if __name__ == '__main__':
   app.secret_key = 'super secret key'
